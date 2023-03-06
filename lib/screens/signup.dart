@@ -49,7 +49,7 @@ class SignUp extends StatelessWidget {
 
                     MyTextField(
                       controller: contactController,
-                      hintText: 'Username',
+                      hintText: 'Contact no.',
                       obscureText: false,
                     ),
 
@@ -57,7 +57,7 @@ class SignUp extends StatelessWidget {
 
                     MyTextField(
                       controller: emailController,
-                      hintText: 'Username',
+                      hintText: 'Email',
                       obscureText: false,
                     ),
 
