@@ -1,6 +1,13 @@
+import 'package:ara/backend/AuthProvider.dart';
 import 'package:ara/components/My_drawer.dart';
+import 'package:ara/components/my_nav_bar.dart';
+import 'package:ara/screens/checkout.dart';
+import 'package:ara/screens/homePage.dart';
+import 'package:ara/screens/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:provider/provider.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
 
 
 class Home extends StatefulWidget {
@@ -12,21 +19,19 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
-  final CarouselController carouselController = CarouselController();
-  int currentIndex = 0;
-
-  List imageList = [
-    {"id": 1, "image_path": 'images/1.jpg'},
-    {"id": 2, "image_path": 'images/2.jpg'},
-    {"id": 3, "image_path": 'images/3.jpg'}
+  int _selectedIndex = 0;
+  final List<Widget> _widgetOptions = <Widget>[
+    HomePage(),
+    Container(
+      color: Colors.black,
+    ),
+    CheckOut()
   ];
-
-
   @override
   Widget build(BuildContext context) {
+    final ap = Provider.of<AuthProvider>(context,listen: false);
     return  Scaffold(
           appBar: AppBar(
-
             title: Text('Ara',style: TextStyle(
                 fontFamily: 'Inspiration',
                 fontSize: 45,
@@ -47,237 +52,45 @@ class _HomeState extends State<Home> {
             backgroundColor: Colors.purple[900],
           ),
 
-          body: SingleChildScrollView(
-            child: Container(
-              color: Colors.white,
-              child: Column(
-                children: [
+          body:Center(
+            child: _widgetOptions.elementAt(_selectedIndex),
+          ),
 
-                  Stack(
-                    children: [
-                      InkWell(
-                        onTap: (){
-                          print(currentIndex);
-                        },
-                        child: CarouselSlider(
-                          items: imageList
-                              .map(
-                                (item) => Image.asset(
-                              item['image_path'],
-                              fit: BoxFit.cover,
-
-                              width: double.infinity,
-                            ),
-                          )
-                              .toList(),
-                          carouselController: carouselController,
-                          options: CarouselOptions(
-                            scrollPhysics: const BouncingScrollPhysics(),
-                            autoPlay: true,
-                            aspectRatio: 2,
-
-                            viewportFraction: 1,
-                            onPageChanged: (index, reason) {
-                              setState(() {
-                                currentIndex = index;
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-
-                      Positioned(
-                        bottom: 10,
-                        left: 0,
-                        right: 0,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: imageList.asMap().entries.map((entry) {
-                            return GestureDetector(
-                              onTap: () => carouselController.animateToPage(entry.key),
-                              child: Container(
-                                width: currentIndex == entry.key ? 17 : 7,
-                                height: 7.0,
-                                margin: const EdgeInsets.symmetric(
-                                  horizontal: 3.0,
-                                ),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: currentIndex == entry.key
-                                        ? Colors.deepPurpleAccent
-                                        : Colors.purple),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-
-                    ],
+          drawer: NavBar(),
+          bottomNavigationBar: Container(
+            color: Colors.purple[900],
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: GNav(
+                backgroundColor: Colors.purple.shade900,
+                color: Colors.white,
+                activeColor: Colors.white,
+                tabBackgroundColor: Colors.pink.shade50.withOpacity(.5),
+                gap: 8,
+                padding: EdgeInsets.all(15),
+                selectedIndex: _selectedIndex,
+                onTabChange: (index){
+                  setState(() {
+                    _selectedIndex = index;
+                  });
+                },
+                tabs: const [
+                  GButton(
+                    icon: Icons.home,
+                    text: 'Home',
                   ),
-
-                  SizedBox(
-                    height: 10,
+                  GButton(
+                    icon: Icons.favorite,
+                    text: 'Favorites',
                   ),
-
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: 40,
-                    color: Colors.cyanAccent,
+                  GButton(
+                    icon: Icons.shopping_cart_checkout,
+                    text: 'Check Out',
                   ),
-
-                  SizedBox(
-                    height: 10,
-                  ),
-
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 5,right: 5,left: 5),
-                    child: Column(
-
-                      children: [
-
-                        Row(
-
-                          children: [
-
-                            Card(
-                              color: Colors.pink[50],
-                              elevation: 10,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)
-                              ),
-                              child: Column(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image.asset('images/MALE.png',width: MediaQuery.of(context).size.width/2-20,),
-                                  ),
-
-                                  Row(
-
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-
-                                    children: [
-
-                                      Text('Men',style: TextStyle(
-                                          color: Colors.red[900],
-                                          fontWeight: FontWeight.w500
-                                      ),),
-
-                                      SizedBox(width: 50,),
-
-                                      Text('Explore',style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 12
-                                      ),),
-
-                                      Icon( Icons.arrow_forward_ios,size: 12)
-
-                                    ],
-                                  )
-
-                                ],
-                              ),
-                            ),
-
-                            SizedBox(width: 10,),
-
-                            Card(
-                              color: Colors.pink[50],
-                              elevation: 10,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)
-                              ),
-                              child: Column(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image.asset('images/KID.png',width: MediaQuery.of(context).size.width/2-20,),
-                                  ),
-
-                                  Row(
-
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-
-                                    children: [
-
-                                      Text('Men',style: TextStyle(
-                                          color: Colors.red[900],
-                                          fontWeight: FontWeight.w500
-                                      ),),
-
-                                      SizedBox(width: 50,),
-
-                                      Text('Explore',style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 12
-                                      ),),
-
-                                      Icon( Icons.arrow_forward_ios,size: 12)
-
-                                    ],
-                                  ),
-
-                                ],
-                              ),
-                            ),
-
-                          ],
-
-                        ),
-
-
-
-                        Card(
-                          color: Colors.pink[50],
-                          elevation: 10,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)
-                          ),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10)
-                            ),
-                            child: Column(
-                              children: [
-                                Image(image: AssetImage('images/female.jpg'),width: MediaQuery.of(context).size.width,),
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 30,left: 30,top: 2,bottom: 2),
-                                  child: Row(children: [
-                                    Text('Women',style: TextStyle(
-                                        color: Colors.red[900],
-                                        fontWeight: FontWeight.w500
-                                    ),),
-
-                                    SizedBox(width: 202,),
-
-                                    Text('Explore',style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 12
-
-                                    ),),
-
-                                    Icon( Icons.arrow_forward_ios,size: 12,)
-
-                                  ],),
-                                )
-                              ],
-                            ),
-                          ),
-                        )
-
-                      ],
-
-                    ),
-                  )
-
                 ],
               ),
             ),
           ),
-
-          drawer: NavBar(),
 
         );
   }
